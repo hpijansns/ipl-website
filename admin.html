@@ -40,7 +40,7 @@ button:hover{background:#c4242b;}
 <input type="date" id="match-date">
 <label>Stadium</label>
 <input type="text" id="match-stadium" placeholder="Stadium Name">
-<label>Team/Card Image URL</label>
+<label>Match Image URL</label>
 <input type="text" id="match-img" placeholder="Match Card Image URL">
 <button onclick="addMatch()">Add Match</button>
 
@@ -48,35 +48,25 @@ button:hover{background:#c4242b;}
 </div>
 
 <script>
-let matches = JSON.parse(localStorage.getItem('iplMatches')) || [];
-let banner = localStorage.getItem('bannerURL') || "https://iili.io/K8L5Ots.jpg";
-document.getElementById('banner-url').value = banner;
-
-// Example match if empty
-if(matches.length === 0){
-    matches.push({
-        teams: "Mumbai Indians vs Chennai Super Kings",
-        date: "2025-04-10",
-        stadium: "Wankhede Stadium",
-        img: "https://iili.io/K8L5Ots.jpg"
-    });
-    localStorage.setItem('iplMatches', JSON.stringify(matches));
-}
+let matches=JSON.parse(localStorage.getItem('iplMatches'))||[
+    {teams:"Mumbai Indians vs Chennai Super Kings",date:"2025-04-05",stadium:"Wankhede Stadium",img:"https://iili.io/K8L5Ots.jpg"}
+];
+let banner=localStorage.getItem('bannerURL')||"https://iili.io/K8L5Ots.jpg";
+document.getElementById('banner-url').value=banner;
 
 function updateBanner(){
-    const url = document.getElementById('banner-url').value;
+    const url=document.getElementById('banner-url').value;
     localStorage.setItem('bannerURL', url);
     alert("Banner updated! Homepage will show the new banner.");
-    location.reload();
 }
 
 function displayMatches(){
-    const container = document.getElementById('matches-list');
-    container.innerHTML = "";
+    const container=document.getElementById('matches-list');
+    container.innerHTML="";
     matches.forEach((match,index)=>{
-        let div = document.createElement('div');
-        div.className = 'match-item';
-        div.innerHTML = `
+        let div=document.createElement('div');
+        div.className='match-item';
+        div.innerHTML=`
         <div>
         <strong>${match.teams}</strong><br>
         Date: ${match.date}<br>
