@@ -28,9 +28,9 @@ button:hover{background:#c4242b;}
 </header>
 
 <div class="container">
-<h2>Update Banner</h2>
-<label>Upload Banner Image</label>
-<input type="file" id="banner-file">
+<h2>Update Banner / Header</h2>
+<label>Banner Image URL</label>
+<input type="text" id="banner-url" placeholder="Paste image URL here">
 <button onclick="updateBanner()">Update Banner</button>
 
 <h2>Manage Matches</h2>
@@ -40,43 +40,43 @@ button:hover{background:#c4242b;}
 <input type="date" id="match-date">
 <label>Stadium</label>
 <input type="text" id="match-stadium" placeholder="Stadium Name">
-<label>Upload Match Card Image</label>
-<input type="file" id="match-file">
+<label>Team/Card Image URL</label>
+<input type="text" id="match-img" placeholder="Match Card Image URL">
 <button onclick="addMatch()">Add Match</button>
 
 <div id="matches-list"></div>
 </div>
 
 <script>
-let matches=JSON.parse(localStorage.getItem('iplMatches'))||[];
+let matches = JSON.parse(localStorage.getItem('iplMatches')) || [];
+let banner = localStorage.getItem('bannerURL') || "https://iili.io/K8L5Ots.jpg";
+document.getElementById('banner-url').value = banner;
 
-function fileToBase64(file,callback){
-    const reader=new FileReader();
-    reader.onload=function(e){callback(e.target.result);}
-    reader.readAsDataURL(file);
+// Example match if empty
+if(matches.length === 0){
+    matches.push({
+        teams: "Mumbai Indians vs Chennai Super Kings",
+        date: "2025-04-10",
+        stadium: "Wankhede Stadium",
+        img: "https://iili.io/K8L5Ots.jpg"
+    });
+    localStorage.setItem('iplMatches', JSON.stringify(matches));
 }
 
-// Banner update
-document.getElementById('banner-file').addEventListener('change',function(){
-    const file=this.files[0];
-    if(file){
-        fileToBase64(file,function(base64){
-            localStorage.setItem('bannerBase64',base64);
-            alert("Banner updated! Homepage will show the new banner.");
-        });
-    }
-});
+function updateBanner(){
+    const url = document.getElementById('banner-url').value;
+    localStorage.setItem('bannerURL', url);
+    alert("Banner updated! Homepage will show the new banner.");
+    location.reload();
+}
 
-function updateBanner(){alert("Select a file to update banner.");}
-
-// Display matches
 function displayMatches(){
-    const container=document.getElementById('matches-list');
-    container.innerHTML="";
+    const container = document.getElementById('matches-list');
+    container.innerHTML = "";
     matches.forEach((match,index)=>{
-        let div=document.createElement('div');
-        div.className='match-item';
-        div.innerHTML=`
+        let div = document.createElement('div');
+        div.className = 'match-item';
+        div.innerHTML = `
         <div>
         <strong>${match.teams}</strong><br>
         Date: ${match.date}<br>
@@ -96,17 +96,15 @@ function addMatch(){
     const teams=document.getElementById('match-teams').value;
     const date=document.getElementById('match-date').value;
     const stadium=document.getElementById('match-stadium').value;
-    const file=document.getElementById('match-file').files[0];
-    if(!teams||!date||!stadium||!file){alert("Fill all fields and select image");return;}
-    fileToBase64(file,function(base64){
-        matches.push({teams,date,stadium,img:base64});
-        localStorage.setItem('iplMatches', JSON.stringify(matches));
-        displayMatches();
-        document.getElementById('match-teams').value="";
-        document.getElementById('match-date').value="";
-        document.getElementById('match-stadium').value="";
-        document.getElementById('match-file').value="";
-    });
+    const img=document.getElementById('match-img').value;
+    if(!teams||!date||!stadium||!img){alert("Fill all fields");return;}
+    matches.push({teams,date,stadium,img});
+    localStorage.setItem('iplMatches', JSON.stringify(matches));
+    displayMatches();
+    document.getElementById('match-teams').value="";
+    document.getElementById('match-date').value="";
+    document.getElementById('match-stadium').value="";
+    document.getElementById('match-img').value="";
 }
 
 function deleteMatch(index){
@@ -121,4 +119,17 @@ function editMatch(index){
     const match=matches[index];
     const newTeams=prompt("Edit Teams", match.teams);
     const newDate=prompt("Edit Date", match.date);
-    const newStadium
+    const newStadium=prompt("Edit Stadium", match.stadium);
+    const newImg=prompt("Edit Image URL", match.img);
+    if(newTeams && newDate && newStadium && newImg){
+        matches[index]={teams:newTeams,date:newDate,stadium:newStadium,img:newImg};
+        localStorage.setItem('iplMatches', JSON.stringify(matches));
+        displayMatches();
+    }
+}
+
+displayMatches();
+</script>
+
+</body>
+</html>
